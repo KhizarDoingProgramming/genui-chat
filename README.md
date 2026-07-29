@@ -1,4 +1,4 @@
-# AI Chat Interface
+# FlyRank AI Streaming Chat
 
 A modern, responsive, and highly polished AI chat application built with Next.js, React, Tailwind CSS v4, and the Vercel AI SDK.
 
