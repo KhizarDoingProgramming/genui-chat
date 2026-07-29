@@ -10,7 +10,7 @@ import { ScrollToBottom } from "./ScrollToBottom";
 import { ThemeToggle } from "../ThemeToggle";
 
 export function ChatContainer() {
-  const { messages, status, stop, sendMessage } = useChat({
+  const { messages, status, stop, sendMessage, error } = useChat({
     api: "/api/chat",
   } as any);
 
@@ -108,6 +108,19 @@ export function ChatContainer() {
 
       <div className="flex-none w-full max-w-3xl mx-auto px-4 pb-6 pt-2 relative">
         <ScrollToBottom isVisible={!isAtBottom} onClick={scrollToBottom} />
+        
+        {error && (
+          <div className="w-full bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-xl mb-4 flex items-center justify-between shadow-sm">
+            <span className="text-sm font-medium">An error occurred while communicating with the AI.</span>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-3 py-1 bg-red-200 dark:bg-red-800/50 hover:bg-red-300 dark:hover:bg-red-800 rounded-lg text-sm transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         {isStreaming && <StopButton onClick={stop} />}
         <div className="w-full relative group">
           <ChatInput 
