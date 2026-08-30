@@ -15,7 +15,7 @@ export function ChatInput({ input, handleInputChange, handleSubmit, isLoading }:
 
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
     }
   }, [input]);
@@ -29,7 +29,7 @@ export function ChatInput({ input, handleInputChange, handleSubmit, isLoading }:
   };
 
   return (
-    <form 
+    <form
       onSubmit={handleSubmit}
       className="flex flex-row items-end w-full bg-zinc-100 dark:bg-zinc-800 rounded-[26px] border border-zinc-200 dark:border-zinc-700/80 shadow-sm"
     >
@@ -43,13 +43,14 @@ export function ChatInput({ input, handleInputChange, handleSubmit, isLoading }:
         rows={1}
         style={{ minHeight: "56px" }}
         disabled={isLoading}
+        aria-label="Chat message input"
       />
       <div className="p-2 shrink-0">
         <button
           type="submit"
           disabled={!input.trim() || isLoading}
           className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full w-10 h-10 flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-80"
-          aria-label="Send message"
+          aria-label={isLoading ? "Sending..." : "Send message"}
         >
           <ArrowUp size={20} strokeWidth={2.5} />
         </button>

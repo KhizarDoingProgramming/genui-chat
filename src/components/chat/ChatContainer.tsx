@@ -2,45 +2,83 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { ThinkingIndicator } from "./ThinkingIndicator";
 import { StopButton } from "./StopButton";
 import { ScrollToBottom } from "./ScrollToBottom";
 import { ThemeToggle } from "../ThemeToggle";
+import { MessageSkeleton } from "./MessageSkeleton";
+import { ErrorBanner } from "./ErrorBanner";
+import { EmptyState } from "./EmptyState";
+
+function getSabotageHeader(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try {
+    const mode = localStorage.getItem("dev-sabotage-mode");
+    if (mode && mode !== "off") {
+      return { "x-dev-sabotage": mode };
+    }
+  } catch {
+    // localStorage unavailable
+  }
+  return {};
+}
 
 const chatTransport = new DefaultChatTransport({
   api: "/api/chat",
+  headers: getSabotageHeader,
 });
 
 export function ChatContainer() {
-  const { messages, status, stop, sendMessage, error } = useChat({
+  const { messages, status, stop, sendMessage, error, regenerate, clearError } = useChat({
     transport: chatTransport,
   });
 
   const isLoading = status === "submitted" || status === "streaming";
 
   const [input, setInput] = useState("");
+  const [isRetrying, setIsRetrying] = useState(false);
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value);
-  
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
+    clearError();
     sendMessage({ role: "user", parts: [{ type: "text", text: input }] });
     setInput("");
-  };
+  }, [input, isLoading, sendMessage, clearError]);
+
+  const handleExampleClick = useCallback((prompt: string) => {
+    if (isLoading) return;
+    clearError();
+    sendMessage({ role: "user", parts: [{ type: "text", text: prompt }] });
+  }, [isLoading, sendMessage, clearError]);
+
+  const handleRetry = useCallback(async () => {
+    if (isRetrying || isLoading) return;
+    setIsRetrying(true);
+    clearError();
+    try {
+      await regenerate();
+    } catch {
+      // Error is handled by useChat's error state
+    } finally {
+      setIsRetrying(false);
+    }
+  }, [isRetrying, isLoading, regenerate, clearError]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (scrollRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
       const atBottom = scrollHeight - scrollTop - clientHeight < 50;
       setIsAtBottom(atBottom);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isAtBottom && scrollRef.current) {
@@ -51,7 +89,7 @@ export function ChatContainer() {
     }
   }, [messages, isAtBottom]);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
         top: scrollRef.current.scrollHeight,
@@ -59,10 +97,12 @@ export function ChatContainer() {
       });
       setIsAtBottom(true);
     }
-  };
+  }, []);
 
   const isStreaming = isLoading && messages.length > 0 && messages[messages.length - 1].role === "assistant";
   const isThinking = isLoading && (!messages.length || messages[messages.length - 1].role === "user");
+
+  const hasPartialContent = error && messages.length > 0 && messages[messages.length - 1].role === "assistant";
 
   return (
     <div className="flex flex-col h-full bg-background text-foreground transition-colors duration-200">
@@ -77,17 +117,14 @@ export function ChatContainer() {
         <ThemeToggle />
       </header>
 
-      <main 
+      <main
         ref={scrollRef}
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto w-full pt-6 pb-6"
       >
         <div className="w-full max-w-3xl mx-auto px-4 md:px-0">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-              <h2 className="text-2xl font-semibold mb-2">How can I help you today?</h2>
-              <p className="text-muted-foreground">Type a message below to start chatting.</p>
-            </div>
+          {messages.length === 0 && !isLoading ? (
+            <EmptyState onExampleClick={handleExampleClick} />
           ) : (
             <div className="flex flex-col space-y-4">
               {messages.map((m) => {
@@ -104,7 +141,7 @@ export function ChatContainer() {
                   />
                 );
               })}
-              
+
               {isThinking && (
                 <div className="py-4 flex items-start w-full">
                    <div className="w-8 h-8 shrink-0 flex items-center justify-center rounded-full border border-border mr-4">
@@ -113,6 +150,10 @@ export function ChatContainer() {
                   <ThinkingIndicator />
                 </div>
               )}
+
+              {isStreaming && messages.length > 0 && messages[messages.length - 1].role === "assistant" && messages[messages.length - 1].parts?.filter(p => p.type === "text").map(p => p.text).join("") === "" && (
+                <MessageSkeleton />
+              )}
             </div>
           )}
         </div>
@@ -120,22 +161,17 @@ export function ChatContainer() {
 
       <div className="flex-none w-full max-w-3xl mx-auto px-4 pb-6 pt-2 relative">
         <ScrollToBottom isVisible={!isAtBottom} onClick={scrollToBottom} />
-        
-        {error && (
-          <div className="w-full bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-xl mb-4 flex items-center justify-between shadow-sm">
-            <span className="text-sm font-medium">An error occurred while communicating with the AI.</span>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="px-3 py-1 bg-red-200 dark:bg-red-800/50 hover:bg-red-300 dark:hover:bg-red-800 rounded-lg text-sm transition-colors"
-            >
-              Retry
-            </button>
-          </div>
-        )}
+
+        <ErrorBanner
+          error={error}
+          isRetrying={isRetrying}
+          hasPartialContent={!!hasPartialContent}
+          onRetry={handleRetry}
+        />
 
         {isStreaming && <StopButton onClick={stop} />}
         <div className="w-full relative group">
-          <ChatInput 
+          <ChatInput
             input={input}
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
