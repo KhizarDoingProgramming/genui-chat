@@ -50,6 +50,11 @@ export async function POST(req: Request) {
     return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error("Error in chat route:", error);
+    console.error("Error name:", error instanceof Error ? error.name : "unknown");
+    console.error("Error message:", error instanceof Error ? error.message : String(error));
+    if (error && typeof error === "object" && "cause" in error) {
+      console.error("Error cause:", error.cause);
+    }
 
     const message = error instanceof Error ? error.message : "";
 
