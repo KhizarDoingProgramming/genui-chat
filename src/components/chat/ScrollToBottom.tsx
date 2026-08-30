@@ -17,7 +17,8 @@ export function ScrollToBottom({ isVisible, onClick }: ScrollToBottomProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           onClick={onClick}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-background border rounded-full text-sm font-medium hover:bg-muted transition-colors shadow-md z-10"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-background border rounded-full text-sm font-medium hover:bg-muted transition-colors shadow-md z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          aria-label="Scroll to latest messages"
         >
           <ArrowDown className="w-4 h-4" />
           Jump to latest

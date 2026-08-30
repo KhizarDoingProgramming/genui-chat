@@ -53,7 +53,7 @@ export function EmptyState({ onExampleClick }: EmptyStateProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
                 onClick={() => onExampleClick(example.text)}
-                className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/50 text-left text-sm transition-colors group"
+                className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/50 text-left text-sm transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <Icon className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
                 <span className="text-muted-foreground group-hover:text-foreground transition-colors">

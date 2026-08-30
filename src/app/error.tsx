@@ -27,7 +27,7 @@ export default function ChatError({
         </p>
         <button
           onClick={reset}
-          className="px-4 py-2 bg-foreground text-background rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+          className="px-4 py-2 bg-foreground text-background rounded-xl text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           Try again
         </button>

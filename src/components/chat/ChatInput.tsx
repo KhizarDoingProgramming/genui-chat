@@ -31,6 +31,7 @@ export function ChatInput({ input, handleInputChange, handleSubmit, isLoading }:
   return (
     <form
       onSubmit={handleSubmit}
+      id="chat-input"
       className="flex flex-row items-end w-full bg-zinc-100 dark:bg-zinc-800 rounded-[26px] border border-zinc-200 dark:border-zinc-700/80 shadow-sm"
     >
       <textarea
@@ -49,7 +50,7 @@ export function ChatInput({ input, handleInputChange, handleSubmit, isLoading }:
         <button
           type="submit"
           disabled={!input.trim() || isLoading}
-          className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full w-10 h-10 flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-80"
+          className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full w-10 h-10 flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           aria-label={isLoading ? "Sending..." : "Send message"}
         >
           <ArrowUp size={20} strokeWidth={2.5} />
