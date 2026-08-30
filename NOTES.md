@@ -25,7 +25,7 @@ Maps tool names to trusted React components. Handles three states:
 - `call` / `partial-call` → Shows animated pending spinner
 - `result` → Validates args with Zod, renders the appropriate component
 - Unknown tools → Shows graceful fallback
-
+p
 ### API Route (`src/app/api/chat/route.ts`)
 - Registers all 5 tools with `streamText()`
 - Uses AI SDK v7 `DefaultChatTransport` on the client
