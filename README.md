@@ -29,7 +29,7 @@ The application is built for developers and technical users who want to see AI-p
 | UI | React 19 |
 | Styling | Tailwind CSS 4 |
 | AI SDK | Vercel AI SDK 7 (`@ai-sdk/react`, `ai`) |
-| AI Provider | Groq (`@ai-sdk/groq`) — Llama 3.1 8B |
+| AI Provider | OpenRouter (`@openrouter/ai-sdk-provider`) — Llama 3.1 8B (free) |
 | Validation | Zod 3 |
 | Animation | Framer Motion 12 |
 | Icons | Lucide React |
@@ -125,7 +125,7 @@ The API route (`src/app/api/chat/route.ts`) imports from this config — no inli
 ### Prerequisites
 
 - Node.js 18+
-- A Groq API key (free at [console.groq.com](https://console.groq.com))
+- An OpenRouter API key (free at [openrouter.ai](https://openrouter.ai))
 
 ### Installation
 
@@ -140,7 +140,7 @@ npm install
 Create `.env.local` in the project root:
 
 ```env
-GROQ_API_KEY=your_groq_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
 ### Running
@@ -182,7 +182,7 @@ Target: ≥50% line coverage across components and lib.
 
 1. Push to GitHub
 2. Import the repository in [vercel.com/new](https://vercel.com/new)
-3. Add the `GROQ_API_KEY` environment variable
+3. Add the `OPENROUTER_API_KEY` environment variable
 4. Deploy
 
 Vercel automatically:
@@ -224,7 +224,7 @@ Retry uses the AI SDK's `regenerate()` method, which re-sends the last user mess
 
 ## Security
 
-- API keys are never exposed to the client (`GROQ_API_KEY` has no `NEXT_PUBLIC_` prefix)
+- API keys are never exposed to the client (`OPENROUTER_API_KEY` has no `NEXT_PUBLIC_` prefix)
 - `.env*` files are gitignored
 - Model output is never executed as JavaScript or rendered as raw JSX
 - All tool arguments are validated with Zod before rendering

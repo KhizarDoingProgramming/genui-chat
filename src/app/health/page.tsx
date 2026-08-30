@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export default async function HealthCheckPage() {
   const requestHeaders = await headers();
   const timestamp = new Date().toISOString();
-  const hasApiKey = !!process.env.GROQ_API_KEY;
+  const hasApiKey = !!process.env.OPENROUTER_API_KEY;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">

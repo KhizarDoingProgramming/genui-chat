@@ -1,6 +1,10 @@
-import { groq } from "@ai-sdk/groq";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { z } from "zod";
 import { zodSchema } from "ai";
+
+const openrouter = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
 
 export const weatherCardSchema = z.object({
   city: z.string().describe("The city name"),
@@ -86,9 +90,7 @@ export type ChartCardArgs = z.infer<typeof chartCardSchema>;
 export type ProductCardArgs = z.infer<typeof productCardSchema>;
 
 export const aiConfig = {
-  model: groq("llama-3.1-8b-instant", {
-    apiKey: process.env.GROQ_API_KEY,
-  }),
+  model: openrouter.chat("meta-llama/llama-3.1-8b-instruct:free"),
   
   temperature: 0.7,
   maxOutputTokens: 2000,

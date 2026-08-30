@@ -4,11 +4,11 @@ These are the strict, testable project-specific rules for AI-assisted developmen
 
 ## 1. Centralized AI Configuration
 **Rule:** All AI model configuration (model selection, system prompts, max tokens, temperature) must remain strictly encapsulated inside `src/lib/ai/config.ts`.
-**Testable Validation:** No references to `groq` or inline system prompts are permitted inside `src/app/api/chat/route.ts` or any other route handlers. The route handler must import these values directly from the config module.
+**Testable Validation:** No references to `groq` or `openrouter` provider imports or inline system prompts are permitted inside `src/app/api/chat/route.ts` or any other route handlers. The route handler must import these values directly from the config module.
 
 ## 2. Environment Variable Security
 **Rule:** API secrets for AI providers must never be prefixed with `NEXT_PUBLIC_` and must never be exposed to the client bundle.
-**Testable Validation:** A search of the codebase for `NEXT_PUBLIC_GROQ_API_KEY` or `process.env.NEXT_PUBLIC` regarding API keys must return zero results. The `GROQ_API_KEY` must only be accessed within server-side environments (e.g., `route.ts`).
+**Testable Validation:** A search of the codebase for `NEXT_PUBLIC_OPENROUTER_API_KEY` or `process.env.NEXT_PUBLIC` regarding API keys must return zero results. The `OPENROUTER_API_KEY` must only be accessed within server-side environments (e.g., `route.ts`).
 
 ## 3. Graceful Auto-Scroll Behavior
 **Rule:** The chat auto-scroll logic must not forcefully scroll the viewport to the bottom if the user has intentionally scrolled up to read previous messages while a generation is in progress.

@@ -9,7 +9,7 @@ A production-ready AI chat application where the model selects the best visual c
 - TypeScript 5 (strict)
 - Tailwind CSS 4
 - Vercel AI SDK 7 (`@ai-sdk/react`, `ai`)
-- Groq (`@ai-sdk/groq`) — Llama 3.1 8B
+- OpenRouter (`@openrouter/ai-sdk-provider`) — Llama 3.1 8B (free)
 - Zod 3 (schema validation)
 - Framer Motion 12
 - Vitest + React Testing Library
@@ -38,7 +38,7 @@ User message → Next.js API Route → Groq model (Llama 3.1 8B)
 All AI config centralized in `src/lib/ai/config.ts`. Route handler imports from config — no inline prompts or model references.
 
 ## Security
-- `GROQ_API_KEY` has no `NEXT_PUBLIC_` prefix — never exposed to client
+- `OPENROUTER_API_KEY` has no `NEXT_PUBLIC_` prefix — never exposed to client
 - `.env*` files gitignored
 - Model output is never executed as JS or rendered as raw JSX
 - Error messages don't expose stack traces, keys, or internal details
@@ -60,7 +60,7 @@ All AI config centralized in `src/lib/ai/config.ts`. Route handler imports from 
 
 ## Deployment
 - Vercel — automatic from `main` branch
-- Set `GROQ_API_KEY` in Vercel environment variables
+- Set `OPENROUTER_API_KEY` in Vercel environment variables
 - Rollback: `git revert HEAD` → `git push`
 
 ## Known Limitations
