@@ -86,7 +86,7 @@ export type ChartCardArgs = z.infer<typeof chartCardSchema>;
 export type ProductCardArgs = z.infer<typeof productCardSchema>;
 
 export const aiConfig = {
-  model: groq("llama-3.3-70b-versatile"),
+  model: groq("llama3-8b-8192"),
   
   temperature: 0.7,
   maxOutputTokens: 2000,
