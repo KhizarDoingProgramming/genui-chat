@@ -1,5 +1,5 @@
 import { streamText, convertToModelMessages } from 'ai';
-import { aiConfig } from '@/lib/ai/config';
+import { aiConfig, aiTools } from '@/lib/ai/config';
 
 export const maxDuration = 30;
 
@@ -12,6 +12,8 @@ export async function POST(req: Request) {
       system: aiConfig.systemPrompt,
       messages: await convertToModelMessages(messages),
       temperature: aiConfig.temperature,
+      maxOutputTokens: aiConfig.maxOutputTokens,
+      tools: aiTools,
     });
 
     return result.toUIMessageStreamResponse();

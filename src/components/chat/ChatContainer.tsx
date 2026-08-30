@@ -1,6 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
@@ -9,10 +10,14 @@ import { StopButton } from "./StopButton";
 import { ScrollToBottom } from "./ScrollToBottom";
 import { ThemeToggle } from "../ThemeToggle";
 
+const chatTransport = new DefaultChatTransport({
+  api: "/api/chat",
+});
+
 export function ChatContainer() {
   const { messages, status, stop, sendMessage, error } = useChat({
-    api: "/api/chat",
-  } as any);
+    transport: chatTransport,
+  });
 
   const isLoading = status === "submitted" || status === "streaming";
 
@@ -72,7 +77,6 @@ export function ChatContainer() {
         <ThemeToggle />
       </header>
 
-
       <main 
         ref={scrollRef}
         onScroll={handleScroll}
@@ -87,11 +91,20 @@ export function ChatContainer() {
           ) : (
             <div className="flex flex-col space-y-4">
               {messages.map((m) => {
-                const textContent = m.parts?.map(p => p.type === 'text' ? p.text : '').join('') || (m as any).content || "";
-                return <ChatMessage key={m.id} role={m.role} content={textContent} />
+                const textContent = m.parts?.filter(p => p.type === "text").map(p => p.text).join("") || "";
+                const toolInvocations = m.parts?.filter(
+                  (p): p is Extract<typeof p, { type: "tool-invocation" }> => p.type === "tool-invocation"
+                );
+                return (
+                  <ChatMessage
+                    key={m.id}
+                    role={m.role}
+                    content={textContent}
+                    toolInvocations={toolInvocations?.length ? toolInvocations : undefined}
+                  />
+                );
               })}
               
-
               {isThinking && (
                 <div className="py-4 flex items-start w-full">
                    <div className="w-8 h-8 shrink-0 flex items-center justify-center rounded-full border border-border mr-4">
@@ -104,7 +117,6 @@ export function ChatContainer() {
           )}
         </div>
       </main>
-
 
       <div className="flex-none w-full max-w-3xl mx-auto px-4 pb-6 pt-2 relative">
         <ScrollToBottom isVisible={!isAtBottom} onClick={scrollToBottom} />
